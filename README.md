@@ -119,7 +119,7 @@ $idenityNamePrincipalId=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageRe
 ### Assign permissions for identity to distribute images
 This command will download and update the template with the parameters specified earlier.
 ```powerShell
-$aibRoleImageCreationUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json"
+$aibRoleImageCreationUrl="https://raw.githubusercontent.com/harsha271199/imgbuilder/main/aibRoleImageCreation.json"
 $aibRoleImageCreationPath = "aibRoleImageCreation.json"
 
 # download config
@@ -160,31 +160,18 @@ For this example we have a template ready to that will download and update the t
 
 If you open the template you can see in the source property the image that is being used, in this example it uses a Win 10 Multi session image. 
 
-## Windows 10 images
-Two key types you should be aware of:
-
-### Multi session
-These images are intend for pooled usage, below is the image details in Azure:
+## Windows 2019 images
 
 ```json
-"publisher": "MicrosoftWindowsDesktop",
-"offer": "Windows-10",
-"sku": "20h2-evd",
+"publisher": "MicrosoftWindowsServer",
+"offer": "WindowsServer",
+"sku": "2019-datacenter-gensecond",
 "version": "latest"
 ```
 
-### Single session
-These images are intend for induvidual usage, below is the image details in Azure:
-```json
-"publisher": "MicrosoftWindowsDesktop",
-"offer": "Windows-10",
-"sku": "19h2-ent",
-"version": "latest"
-```
-
-You can also change the Win10 images available:
+You can also change the Win2019 images available:
 ```powerShell
-Get-AzVMImageSku -Location westus2 -PublisherName MicrosoftWindowsDesktop -Offer windows-10
+Get-AzVMImageSku -Location westus2 -PublisherName MicrosoftWindowsServer -Offer WindowsServer
 ```
 
 ## Download template and configure
