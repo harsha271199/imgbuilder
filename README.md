@@ -177,8 +177,8 @@ Get-AzVMImageSku -Location westus2 -PublisherName MicrosoftWindowsServer -Offer 
 ## Download template and configure
 ```powerShell
 
-$templateUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/armTemplateWVD.json"
-$templateFilePath = "armTemplateWVD.json"
+$templateUrl="https://raw.githubusercontent.com/harsha271199/imgbuilder/main/armTemplate2019.json"
+$templateFilePath = "armTemplate2019.json"
 
 Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing
 
