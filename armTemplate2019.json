@@ -47,9 +47,9 @@
         
             "source": {
                 "type": "PlatformImage",
-                    "publisher": "MicrosoftWindowsDesktop",
-                    "offer": "windows-10",
-                    "sku": "20h1-ent",
+                    "publisher": "MicrosoftWindowsServer",
+                    "offer": "WindowsServer",
+                    "sku": "2019-datacenter-gensecond",
                     "version": "latest"
             },
             "customize": [
@@ -91,8 +91,8 @@
                     "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
                     "runOutputName": "<runOutputName>",
                     "artifactTags": {
-                        "source": "wvd10",
-                        "baseosimg": "windows10"
+                        "source": "win2019",
+                        "baseosimg": "window2019"
                     },
                     "replicationRegions": [
                       "<region1>"
