@@ -229,6 +229,22 @@ $getStatus.LastRunStatusRunSubState
 ## Create a VM
 Now the build is finished you can build a VM from the image, use the examples from [here](https://docs.microsoft.com/en-us/powershell/module/az.compute/new-azvm?view=azps-2.5.0#examples).
 
+Store the VM login credentials in a variable. The password must be complex.
+
+###Azure PowerShell
+
+```powerShell
+$Cred = Get-Credential
+```
+Create the VM by using the image you created.
+
+###Azure PowerShell
+
+```powerShell
+$ArtifactId = (Get-AzImageBuilderTemplateRunOutput -ImageTemplateName $imageTemplateName -ResourceGroupName $imageResourceGroup).ArtifactId
+
+New-AzVM -ResourceGroupName $imageResourceGroup -Image $ArtifactId -Name myWinVM01 -Credential $Cred
+```
 # Clean Up
 
 Delete the resource group template first, do not just delete the entire resource group, otherwise the staging resource group (*IT_*) used by AIB will not be cleaned up.
