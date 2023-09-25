@@ -1,22 +1,21 @@
 # Azure Imgbuilder
-![Alt Image-builder-overview](https://learn.microsoft.com/en-us/azure/virtual-machines/media/image-builder-overview/image-builder-flow.png)
-## Description
 
 Creating standardized virtual machine (VM) images allow organizations to migrate to the cloud and ensure consistency in the deployments. Users commonly want VMs to include predefined security and configuration settings as well as application software they own. However, setting up your own image build pipeline would require infrastructure and setup. With Azure VM Image Builder, you can take an ISO or Azure Marketplace image or existing Custom images and start creating your own golden images in a few steps.
 
 The Azure VM Image Builder (AIB) lets you start with either a Windows or Linux-based Azure Marketplace VM, Red Hat Enterprise Linux (RHEL) ISO or your existing custom Images, and begin to add your own customizations.
+
+![Alt Image-builder-overview](https://learn.microsoft.com/en-us/azure/virtual-machines/media/image-builder-overview/image-builder-flow.png)
 
 ## Feature Overview
 The AIB is a fully managed Azure service that is accessible by an Azure first party resource provider.
 
 The diagram below shows the end to end AIB pipeline, where you can see the three main components, source, customize and distribute, with their inputs and outputs.
 
-Image Builder Overview
+![Alt Image-builder-feature](https://www.anoopcnair.com/wp-content/uploads/2019/10/image-1024x375.png)
 
 To describe the pipeline steps requires a configuration template, this is ingested into the service, then stored as an ‘ImageTemplate’ artifact. The template itself, is just a JSON template, and it can be nested into an ARM template, see examples [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates ).
 
 For the AIB to stand up the pipeline requires an invocation call into the AIB service referencing a stored template.
-
 
 Create the Image Template, see the [quick quickstarts](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts ) on how to do this.
 Submit the Image Template, at this time AIB will download the RHEL ISO, and shell scripts needed, and store these in an automatically resource group created in the customers subscription, in this format : ‘IT_<DestinationResourceGroup>_<TemplateName>’. This will be removed when the Image Template artifact is deleted. You will also see the template artifact, that references these in the resource group referenced when creating the image template.
@@ -34,53 +33,7 @@ As mentioned above (TBD: Link to ‘Feature Overview), creating a VM image using
 
 Creating an Image Template and submitted it to the AIB.
 Invoking the AIB to create an Image from this template.
-
-
-
-
-This article is to show you how you can create a basic customized image with these customizations:
-
-* Installing a LOB App, [MS Teams](https://docs.microsoft.com/en-us/azure/virtual-desktop/teams-on-wvd)
-* [Windows Restart](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#windows-restart-customizer)
-* [Windows Update](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#windows-update-customizer)
-
-We will show you how to automate this using the Azure VM Image Builder, and distibute to the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries), where you can replicate regions, control the scale, and share inside and outside your organizations.
-
-
-To simplify deploying an AIB configuration template with PowerShell CLI, this example uses an Azure Resource Manager (ARM) template with the AIB template nested inside, and gives you other benefits for free, such as variables and parameter inputs etc. You can also pass parameters from the commandline too, which you will see here.
-
-This walk through is intended to be a copy and paste exercise, and will provide you with a custom Win Server image (AIB also supports client images), showing you how you can easily create a custom image.
-
-> Note! 
-The scripts to install the apps are located in this repo, note, they are for illustration and testing ONLY, and **NOT** production. 
-
-## Tips for Building Windows Images with AIB:
-1. VM Size - When AIB runs, it uses a build VM to build the image, the default AIB size (Standard_D1_v2) is not suitable. Use Standard_D2_v2 or greater.
-2. The example here uses the AIB [PowerShell customerizer scripts](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#powershell-customizer), you will need to run these with the settings below. If you do not, the build will hang.
-```text
-  "runElevated": true,
-  "runAsSystem": true,
-```
-
-3. Comment your code
-
-The AIB build log (customization.log) is extremely verbose, if you comment your scripts using 'write-host' these will be sent to the logs, and make troubleshooting easier.
-
-```PowerShell
- write-host 'AIB Customization: Starting OS Optimizations script'
-```
-
-4. Emit Exit Codes
-AIB expects all scripts to return a 0 exit code, any non zero exit code will result in AIB failing the customization and stopping the build. If you have complex scripts, add instrumentation and emit exit codes, these will be shown in the customization.log.
-```PowerShell
- Write-Host "Exit code: " $LASTEXITCODE
-```
-5. Test
-Please test and test your code before on a standalone VM, ensure there are no user prompts, you are using the right privilege etc.
-
-6. Networking: Set-NetAdapterAdvancedProperty 
-
-This is being set in the optimization script, but fails the AIB build, as it disconnects the network, this is commented out. It is under investigation.
+![Alt Image-builder-feature](https://docs.microsoft.com/en-us/azure/includes/media/virtual-machines-image-builder-overview/image-builder-process.png)
 
 ## PreReqs
 You must have the latest Azure PowerShell CmdLets installed, see [here](https://docs.microsoft.com/en-us/powershell/azure/overview?view=azps-2.6.0) for install details.
@@ -305,4 +258,48 @@ Remove-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $iden
 ```powerShell
 Remove-AzResourceGroup $imageResourceGroup -Force
 ```
-## Next Steps
+
+This article is to show you how you can create a basic customized image with these customizations:
+
+* Installing a LOB App, [MS Teams](https://docs.microsoft.com/en-us/azure/virtual-desktop/teams-on-wvd)
+* [Windows Restart](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#windows-restart-customizer)
+* [Windows Update](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#windows-update-customizer)
+
+We will show you how to automate this using the Azure VM Image Builder, and distibute to the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries), where you can replicate regions, control the scale, and share inside and outside your organizations.
+
+
+To simplify deploying an AIB configuration template with PowerShell CLI, this example uses an Azure Resource Manager (ARM) template with the AIB template nested inside, and gives you other benefits for free, such as variables and parameter inputs etc. You can also pass parameters from the commandline too, which you will see here.
+
+This walk through is intended to be a copy and paste exercise, and will provide you with a custom Win Server image (AIB also supports client images), showing you how you can easily create a custom image.
+
+> Note! 
+The scripts to install the apps are located in this repo, note, they are for illustration and testing ONLY, and **NOT** production.
+
+
+## Tips for Building Windows Images with AIB:
+1. VM Size - When AIB runs, it uses a build VM to build the image, the default AIB size (Standard_D1_v2) is not suitable. Use Standard_D2_v2 or greater.
+2. The example here uses the AIB [PowerShell customerizer scripts](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#powershell-customizer), you will need to run these with the settings below. If you do not, the build will hang.
+```text
+  "runElevated": true,
+  "runAsSystem": true,
+```
+
+3. Comment your code
+
+The AIB build log (customization.log) is extremely verbose, if you comment your scripts using 'write-host' these will be sent to the logs, and make troubleshooting easier.
+
+```PowerShell
+ write-host 'AIB Customization: Starting OS Optimizations script'
+```
+
+4. Emit Exit Codes
+AIB expects all scripts to return a 0 exit code, any non zero exit code will result in AIB failing the customization and stopping the build. If you have complex scripts, add instrumentation and emit exit codes, these will be shown in the customization.log.
+```PowerShell
+ Write-Host "Exit code: " $LASTEXITCODE
+```
+5. Test
+Please test and test your code before on a standalone VM, ensure there are no user prompts, you are using the right privilege etc.
+
+6. Networking: Set-NetAdapterAdvancedProperty 
+
+This is being set in the optimization script, but fails the AIB build, as it disconnects the network, this is commented out. It is under investigation.
