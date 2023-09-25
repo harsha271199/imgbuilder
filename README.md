@@ -1,5 +1,5 @@
 # Azure Imgbuilder
-
+![Alt Image-builder-overview](https://learn.microsoft.com/en-us/azure/virtual-machines/media/image-builder-overview/image-builder-flow.png)
 ## Description
 
 Creating standardized virtual machine (VM) images allow organizations to migrate to the cloud and ensure consistency in the deployments. Users commonly want VMs to include predefined security and configuration settings as well as application software they own. However, setting up your own image build pipeline would require infrastructure and setup. With Azure VM Image Builder, you can take an ISO or Azure Marketplace image or existing Custom images and start creating your own golden images in a few steps.
