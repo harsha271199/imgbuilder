@@ -1,5 +1,43 @@
 # Azure Imgbuilder
 
+##Description
+
+Creating standardized virtual machine (VM) images allow organizations to migrate to the cloud and ensure consistency in the deployments. Users commonly want VMs to include predefined security and configuration settings as well as application software they own. However, setting up your own image build pipeline would require infrastructure and setup. With Azure VM Image Builder, you can take an ISO or Azure Marketplace image or existing Custom images and start creating your own golden images in a few steps.
+
+The Azure VM Image Builder (AIB) lets you start with either a Windows or Linux-based Azure Marketplace VM, Red Hat Enterprise Linux (RHEL) ISO or your existing custom Images, and begin to add your own customizations.
+
+##Feature Overview
+The AIB is a fully managed Azure service that is accessible by an Azure first party resource provider.
+
+The diagram below shows the end to end AIB pipeline, where you can see the three main components, source, customize and distribute, with their inputs and outputs.
+
+Image Builder Overview
+
+To describe the pipeline steps requires a configuration template, this is ingested into the service, then stored as an ‘ImageTemplate’ artifact. The template itself, is just a JSON template, and it can be nested into an ARM template, see examples [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates ).
+
+For the AIB to stand up the pipeline requires an invocation call into the AIB service referencing a stored template.
+
+
+Create the Image Template, see the [quick quickstarts](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts ) on how to do this.
+Submit the Image Template, at this time AIB will download the RHEL ISO, and shell scripts needed, and store these in an automatically resource group created in the customers subscription, in this format : ‘IT_<DestinationResourceGroup>_<TemplateName>’. This will be removed when the Image Template artifact is deleted. You will also see the template artifact, that references these in the resource group referenced when creating the image template.
+Invoking the AIB to create the image, will take the template artifact, then stand up a pipeline to create it, by standing up a VM, network, and storage in the automatically created resource group, ‘IT_<DestinationResourceGroup>_<TemplateName>’.
+
+##Permissions Requirements
+Image Builder uses Azure user-assigned managed identity to manage the necessary permissions.
+
+Permissions Overview [public doc](https://learn.microsoft.com/en-us/azure/virtual-machines/image-builder-overview?bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json&tabs=azure-powershell#permissions )
+Configure Image builder permissions with [CLI](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-permissions-cli)  or [PowerShell](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-permissions-powershell) 
+Permission Requirements explained in detail on [GitHub](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#azure-vm-image-builder-permissions-explained-and-requirements) 
+
+##How it works
+As mentioned above (TBD: Link to ‘Feature Overview), creating a VM image using AIB is a two-step process:
+
+Creating an Image Template and submitted it to the AIB.
+Invoking the AIB to create an Image from this template.
+
+
+
+
 This article is to show you how you can create a basic customized image with these customizations:
 
 * Installing a LOB App, [MS Teams](https://docs.microsoft.com/en-us/azure/virtual-desktop/teams-on-wvd)
